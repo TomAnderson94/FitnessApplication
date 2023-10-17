@@ -16,6 +16,7 @@ const exercisesController = async (req,res) => {
     const extendedTable = `${table} LEFT JOIN ExerciseTypes ON Exercises.ExerciseExerciseTypeID=ExerciseTypeID`;
 //  const extendedFields;
     const sql = `SELECT ${fields} FROM ${extendedTable}`;
+
     // Execute query
     let isSuccess = false;
     let message = "";
