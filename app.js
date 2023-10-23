@@ -1,12 +1,13 @@
 // Imports --------------------------------------------------
 import express from 'express';
 import database from './database.js';
+import cors from 'cors';
 
 // Configure Express App ------------------------------------
 const app = new express();
 
 // Configure Middleware -------------------------------------
-
+app.use(cors()); // Add this line to enable CORS (Cross-Origin Resource Sharing)
 
 // Controllers ----------------------------------------------
 const exercisesController = async (req,res) => {
