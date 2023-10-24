@@ -79,7 +79,7 @@ const exercisesController = async (req,res) => {
     // Build SQL 
     const table = 'ExerciseTypes';
     const whereField = 'ExerciseTypeID';
-    const fields = ['ExerciseTypeID', 'ExerciseTypeName'];
+    const fields = ['ExerciseTypeID', 'ExerciseTypeName', 'ExerciseTypeURL'];
 //  const extendedTable = `${table} LEFT JOIN ExerciseTypes ON Exercises.ExerciseExerciseTypeID=ExerciseTypes.ExerciseTypeID`;
 //  const extendedFields;
     let sql = `SELECT ${fields} FROM ${table}`;
