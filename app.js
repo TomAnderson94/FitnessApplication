@@ -8,6 +8,8 @@ const app = new express();
 
 // Configure Middleware -------------------------------------
 app.use(cors()); // Add this line to enable CORS (Cross-Origin Resource Sharing)
+app.use(express.json());
+
 
 // Controllers ----------------------------------------------
 const exercisesController = async (req,res) => {
@@ -120,6 +122,48 @@ const addController = (req,res) => {
     res.json(result);
 }*/
 
+const recordExerciseController = async (req, res) => {
+    try {
+      const {
+        UserUserID,
+        ExerciseExerciseID,
+        Weight,
+        Reps,
+        Sets,
+        Date,
+      } = req.body;
+
+    // Validate the incoming data
+    if (!UserUserID || !ExerciseExerciseID || !Weight || !Reps || !Sets || !Date) {
+        return res.status(400).json({ message: 'Missing required fields' });
+      }
+    // Validate weight data as a number only
+    if (typeof Weight !== 'number') {
+        return res.status(400).json({ message: 'Weight must be a number' });
+      }
+    
+      const sql = `INSERT INTO UserExercises (UserUserID, ExerciseExerciseID, Weight, Reps, Sets, Date)
+                   VALUES (?, ?, ?, ?, ?, ?)`;
+      const result = await database.query(sql, [
+        UserUserID,
+        ExerciseExerciseID,
+        Weight,
+        Reps,
+        Sets,
+        Date,
+      ]);
+  
+      if (result[0].affectedRows === 1) {
+        res.status(201).json({ message: 'Exercise recorded successfully' });
+      } else {
+        res.status(400).json({ message: 'Failed to record exercise' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+  };
+  
+
 // Endpoints ------------------------------------------------
 app.get('/api/exercises', exercisesController);
 app.get('/api/exercises/:ExerciseID', exercisesController);
@@ -127,6 +171,9 @@ app.get('/api/exercises/exercise-types/:ExerciseExerciseTypeID', exercisesOfType
 
 app.get('/api/exerciseTypes', exerciseTypesController);
 app.get('/api/exerciseTypes/:ExerciseTypeID', exerciseTypesController);
+
+app.post('/api/userExercises/record', recordExerciseController);
+
 
 
 
