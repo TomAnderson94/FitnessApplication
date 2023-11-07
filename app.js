@@ -172,7 +172,8 @@ app.get('/api/exercises/exercise-types/:ExerciseExerciseTypeID', exercisesOfType
 app.get('/api/exerciseTypes', exerciseTypesController);
 app.get('/api/exerciseTypes/:ExerciseTypeID', exerciseTypesController);
 
-app.post('/api/userExercises/record', recordExerciseController);
+app.get('/api/userExercises', recordExerciseController);
+app.post('/api/userExercises', recordExerciseController);
 
 
 
