@@ -17,8 +17,8 @@ const exercisesController = async (req,res) => {
     // Build SQL 
     const table = 'Exercises';
     const whereField = 'ExerciseID';
-    const fields = ['ExerciseID', 'ExerciseName', 'ExerciseExerciseTypeID', 'ExerciseURL'];
-    const extendedTable = `${table} LEFT JOIN ExerciseTypes ON Exercises.ExerciseExerciseTypeID=ExerciseTypes.ExerciseTypeID`;
+    const fields = ['ExerciseID', 'ExerciseTypeTypeID','ExerciseName'];
+    const extendedTable = `${table} LEFT JOIN ExerciseTypes ON Exercises.ExerciseTypeTypeID=ExerciseTypes.ExerciseTypeID`;
 //  const extendedFields;
     let sql = `SELECT ${fields} FROM ${extendedTable}`;
     if (id) sql += ` WHERE ${whereField}=${id}`;
@@ -28,7 +28,7 @@ const exercisesController = async (req,res) => {
     let result = null;
     try {
         [result] = await database.query(sql);
-        if(result.length === 0) message = 'No record(s) found';
+        if (result.length === 0) message = 'No record(s) found';
         else {
             isSuccess = true;
             message = 'Record(s) successfully found';
@@ -124,8 +124,9 @@ const addController = (req,res) => {
 
 const recordExerciseController = async (req, res) => {
     try {
+      // Hardcoded UserUserID for testing purposes ('1' represents an actual ID from the Users table)
+      const UserUserID = 1;
       const {
-        UserUserID,
         ExerciseExerciseID,
         Weight,
         Reps,
@@ -134,7 +135,7 @@ const recordExerciseController = async (req, res) => {
       } = req.body;
 
     // Validate the incoming data
-    if (!UserUserID || !ExerciseExerciseID || !Weight || !Reps || !Sets || !Date) {
+    if (!ExerciseExerciseID || !Weight || !Reps || !Sets || !Date) {
         return res.status(400).json({ message: 'Missing required fields' });
       }
     // Validate weight data as a number only
@@ -159,9 +160,55 @@ const recordExerciseController = async (req, res) => {
         res.status(400).json({ message: 'Failed to record exercise' });
       }
     } catch (error) {
-      res.status(500).json({ message: 'Internal server error', error: error.message });
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error', error: error.toString() });
     }
   };
+
+
+const userExercisesController = async (req, res) => {
+  console.log("there:");
+  console.log(req.params)
+  const id = req.params.UserUserID; 
+
+  const table = 'UserExercises';
+  const whereField = 'UserUserID';
+  const fields = ['UserExerciseID', 'UserUserID', 'ExerciseExerciseID', 'Weight', 'Reps', 'Sets', 'Date'];
+  const extendedTable = `${table} JOIN Exercises ON UserExercises.ExerciseExerciseID=Exercises.ExerciseID`;
+  const sql = `SELECT ${fields} FROM ${extendedTable} WHERE ${whereField}=${id}`;
+  console.log(sql);
+  try {
+    const [results] = await database.query(sql, [id]);
+    if (results.length === 0) {
+      res.status(404).json({ message: 'No record found with the given ID' });
+    } else {
+      res.status(200).json(results);
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+const allUserExercisesController = async (req, res) => {
+ // const sql = 'SELECT * FROM UserExercises';
+  const table = 'UserExercises';
+  //const whereField = 'UserUserID';
+  const fields = ['UserExerciseID', 'UserUserID', 'ExerciseExerciseID', 'Weight', 'Reps', 'Sets', 'Date'];
+ // const extendedTable = `${table} JOIN Exercises ON UserExercises.ExerciseExerciseID=Exercises.ExerciseID`;
+  const sql = `SELECT ${fields} FROM ${table} `;
+  console.log(sql);
+  try {
+    const [results] = await database.query(sql);
+    if (results.length === 0) {
+      res.status(404).json({ message: 'No exercises found' });
+    } else {
+      res.status(200).json(results);
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
   
 
 // Endpoints ------------------------------------------------
@@ -172,7 +219,8 @@ app.get('/api/exercises/exercise-types/:ExerciseExerciseTypeID', exercisesOfType
 app.get('/api/exerciseTypes', exerciseTypesController);
 app.get('/api/exerciseTypes/:ExerciseTypeID', exerciseTypesController);
 
-app.get('/api/userExercises', recordExerciseController);
+app.get('/api/userExercises', allUserExercisesController);
+app.get('/api/userExercises/:UserUserID', userExercisesController);
 app.post('/api/userExercises', recordExerciseController);
 
 
