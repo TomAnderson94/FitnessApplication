@@ -12,6 +12,22 @@ app.use(express.json());
 
 
 // Controllers ----------------------------------------------
+
+const buildExerciseTypesSelectSql = (id, variant) => {
+  let sql = '';
+  let table = 'ExerciseTypes';
+  let fields = ['ExerciseTypeID', 'ExerciseTypeName', 'ExerciseTypeURL'];
+
+  switch (variant) {
+    default:
+      sql = `SELECT ${fields} FROM ${table}`;
+      if (id) sql += ` WHERE ExerciseTypeID=${id}`;
+  }
+
+  return sql;
+
+}
+
 const exercisesController = async (req,res) => {
     const id = req.params.ExerciseID; // Undefined in the case of /api/exercises endpoint
     // Build SQL 
@@ -79,13 +95,7 @@ const exercisesController = async (req,res) => {
  const exerciseTypesController = async (req,res) => {
     const id = req.params.ExerciseTypeID;
     // Build SQL 
-    const table = 'ExerciseTypes';
-    const whereField = 'ExerciseTypeID';
-    const fields = ['ExerciseTypeID', 'ExerciseTypeName', 'ExerciseTypeURL'];
-//  const extendedTable = `${table} LEFT JOIN ExerciseTypes ON Exercises.ExerciseExerciseTypeID=ExerciseTypes.ExerciseTypeID`;
-//  const extendedFields;
-    let sql = `SELECT ${fields} FROM ${table}`;
-    if (id) sql += ` WHERE ${whereField}=${id}`;
+    const sql = buildExerciseTypesSelectSql(id, null);
     // Execute query
     let isSuccess = false;
     let message = "";
