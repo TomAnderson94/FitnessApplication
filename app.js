@@ -224,7 +224,7 @@ const updateExerciseRecordController = async (req, res) => {
   try {    console.log('Body: ', req.body);
 console.log('Params: ', req.params);
     const UserExerciseID = req.params.UserExerciseID;
-    const UserUserID = req.params.UserUserID; // Assuming UserUserID is passed as a parameter
+    const UserUserID = req.params.UserUserID; 
 
     const {
       ExerciseExerciseID,
@@ -271,6 +271,30 @@ console.log('Params: ', req.params);
 };
 
 
+const deleteExerciseRecordController = async (req, res) => {
+  try {
+    const UserExerciseID = req.params.UserExerciseID;
+    const UserUserID = req.params.UserUserID; 
+
+    // Validate the incoming data ensuring the IDs are provided
+    if (!UserExerciseID || !UserUserID) {
+      return res.status(400).json({ message: 'Missing required IDs' });
+    }
+
+    const sql = `DELETE FROM UserExercises WHERE UserExerciseID = ? AND UserUserID = ?`;
+    const result = await database.query(sql, [UserExerciseID, UserUserID]);
+
+    if (result[0].affectedRows === 1) {
+      res.status(200).json({ message: 'Exercise record deleted successfully' });
+    } else {
+      res.status(400).json({ message: 'Failed to delete exercise record or record not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
 
   
 
@@ -287,6 +311,7 @@ app.get('/api/userExercises/:UserUserID', userExercisesController);
 app.post('/api/userExercises', recordExerciseController);
 
 app.put('/api/userExercises/:UserExerciseID/:UserUserID', updateExerciseRecordController);
+app.delete('/api/userExercises/:UserExerciseID/:UserUserID', deleteExerciseRecordController);
 
 
 
