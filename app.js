@@ -219,6 +219,59 @@ const allUserExercisesController = async (req, res) => {
   }
 };
 
+
+const updateExerciseRecordController = async (req, res) => {
+  try {    console.log('Body: ', req.body);
+console.log('Params: ', req.params);
+    const UserExerciseID = req.params.UserExerciseID;
+    const UserUserID = req.params.UserUserID; // Assuming UserUserID is passed as a parameter
+
+    const {
+      ExerciseExerciseID,
+      Weight,
+      Reps,
+      Sets,
+      Date,
+    } = req.body;
+
+    // Validate the incoming data
+    if (!ExerciseExerciseID || !Weight || !Reps || !Sets || !Date) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    // Validate weight data as a number only
+    if (typeof Weight !== 'number') {
+      return res.status(400).json({ message: 'Weight must be a number' });
+    }
+
+    const sql = `UPDATE UserExercises 
+                 SET ExerciseExerciseID = ?, Weight = ?, Reps = ?, Sets = ?, Date = ? 
+                 WHERE UserExerciseID = ? AND UserUserID = ?`;
+    const result = await database.query(sql, [
+      ExerciseExerciseID,
+      Weight,
+      Reps,
+      Sets,
+      Date,
+      UserExerciseID,
+      UserUserID,
+    ]);
+
+
+
+    if (result[0].affectedRows === 1) {
+      res.status(200).json({ message: 'Exercise record updated successfully' });
+    } else {
+      res.status(400).json({ message: 'Failed to update exercise record' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error', error: error.toString(), error: error.message });
+  }
+};
+
+
+
   
 
 // Endpoints ------------------------------------------------
@@ -232,6 +285,8 @@ app.get('/api/exerciseTypes/:ExerciseTypeID', exerciseTypesController);
 app.get('/api/userExercises', allUserExercisesController);
 app.get('/api/userExercises/:UserUserID', userExercisesController);
 app.post('/api/userExercises', recordExerciseController);
+
+app.put('/api/userExercises/:UserExerciseID/:UserUserID', updateExerciseRecordController);
 
 
 
