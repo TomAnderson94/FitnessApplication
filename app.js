@@ -184,7 +184,7 @@ const userExercisesController = async (req, res) => {
   const table = 'UserExercises';
   const whereField = 'UserUserID';
   const fields = ['UserExerciseID', 'UserUserID', 'ExerciseExerciseID', 'Weight', 'Reps', 'Sets', 'Date'];
-  const extendedTable = `${table} JOIN Exercises ON UserExercises.ExerciseExerciseID=Exercises.ExerciseID`;
+  const extendedTable = `${table} LEFT JOIN Exercises ON UserExercises.ExerciseExerciseID=Exercises.ExerciseID`;
   const sql = `SELECT ${fields} FROM ${extendedTable} WHERE ${whereField}=${id}`;
   console.log(sql);
   try {
@@ -224,19 +224,26 @@ const updateExerciseRecordController = async (req, res) => {
   try {    console.log('Body: ', req.body);
 console.log('Params: ', req.params);
     const UserExerciseID = req.params.UserExerciseID;
-    const UserUserID = req.params.UserUserID; 
+ //   const UserUserID = req.params.UserUserID; 
 
     const {
+      UserUserID,
       ExerciseExerciseID,
       Weight,
       Reps,
       Sets,
       Date,
     } = req.body;
+    console.log(`message body:[${JSON.stringify(req.body)}]`);
+    console.log(ExerciseExerciseID);
+    console.log(Weight);
+    console.log(Reps);
+    console.log(Sets);
+
 
     // Validate the incoming data
-    if (!ExerciseExerciseID || !Weight || !Reps || !Sets || !Date) {
-      return res.status(400).json({ message: 'Missing required fields' });
+    if (UserUserID === undefined || !ExerciseExerciseID || !Weight || !Reps || !Sets || !Date) {
+      return res.status(400).json({ message: 'Missing required fields really' });
     }
 
     // Validate weight data as a number only
