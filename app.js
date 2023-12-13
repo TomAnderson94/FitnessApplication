@@ -180,6 +180,8 @@ const userExercisesController = async (req, res) => {
   console.log("there:");
   console.log(req.params)
   const id = req.params.UserUserID; 
+  console.log(id)
+  
 
   const table = 'UserExercises';
   const whereField = 'UserUserID';
