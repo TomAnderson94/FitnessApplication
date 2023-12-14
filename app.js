@@ -284,6 +284,8 @@ const deleteExerciseRecordController = async (req, res) => {
   try {
     const UserExerciseID = req.params.UserExerciseID;
     const UserUserID = req.params.UserUserID; 
+    console.log('Delete Params: ', req.params);
+
 
     // Validate the incoming data ensuring the IDs are provided
     if (!UserExerciseID || !UserUserID) {
