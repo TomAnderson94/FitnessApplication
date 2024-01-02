@@ -2,6 +2,7 @@
 import express from 'express';
 import database from './database.js';
 import cors from 'cors';
+import exercisesRouter from './routers/exercises-router.js';
 
 // Configure Express App ------------------------------------
 const app = new express();
@@ -28,69 +29,13 @@ const buildExerciseTypesSelectSql = (id, variant) => {
 
 }
 
-const exercisesController = async (req,res) => {
-    const id = req.params.ExerciseID; // Undefined in the case of /api/exercises endpoint
-    // Build SQL 
-    const table = 'Exercises';
-    const whereField = 'ExerciseID';
-    const fields = ['ExerciseID', 'ExerciseTypeTypeID','ExerciseName'];
-    const extendedTable = `${table} LEFT JOIN ExerciseTypes ON Exercises.ExerciseTypeTypeID=ExerciseTypes.ExerciseTypeID`;
-//  const extendedFields;
-    let sql = `SELECT ${fields} FROM ${extendedTable}`;
-    if (id) sql += ` WHERE ${whereField}=${id}`;
-    // Execute query
-    let isSuccess = false;
-    let message = "";
-    let result = null;
-    try {
-        [result] = await database.query(sql);
-        if (result.length === 0) message = 'No record(s) found';
-        else {
-            isSuccess = true;
-            message = 'Record(s) successfully found';
-        }
-    }
-    catch (error) {
-        message = `Failed to execute query: ${error.message}`;
-    }
-    
-    // Responses
-    isSuccess
-    ? res.status(200).json(result)
-    : res.status(400).json({ message });
- };
+const buildDeleteUserExerciseSql = (userExerciseId, userUserId) => {
+  const table = 'UserExercises';
+  let sql = `DELETE FROM ${table} WHERE UserExerciseID = ? AND UserUserID = ?`;
+  const values = [userExerciseId, userUserId];
+  return { sql, values };
+}
 
-
- const exercisesOfTypeController = async (req,res) => {
-    const id = req.params.ExerciseExerciseTypeID; 
-    // Build SQL 
-    const table = 'Exercises';
-    const whereField = 'ExerciseExerciseTypeID';
-    const fields = ['ExerciseID', 'ExerciseName', 'ExerciseExerciseTypeID', 'ExerciseURL'];
-    const extendedTable = `${table} LEFT JOIN ExerciseTypes ON Exercises.ExerciseExerciseTypeID=ExerciseTypes.ExerciseTypeID`;
-//  const extendedFields;
-    const sql = `SELECT ${fields} FROM ${extendedTable} WHERE ${whereField}=${id}`;
-    // Execute query
-    let isSuccess = false;
-    let message = "";
-    let result = null;
-    try {
-        [result] = await database.query(sql);
-        if(result.length === 0) message = 'No record(s) found';
-        else {
-            isSuccess = true;
-            message = 'Record(s) successfully found';
-        }
-    }
-    catch (error) {
-        message = `Failed to execute query: ${error.message}`;
-    }
-    
-    // Responses
-    isSuccess
-    ? res.status(200).json(result)
-    : res.status(400).json({ message });
- };
 
  const exerciseTypesController = async (req,res) => {
     const id = req.params.ExerciseTypeID;
@@ -291,8 +236,9 @@ const deleteExerciseRecordController = async (req, res) => {
     if (!UserExerciseID || !UserUserID) {
       return res.status(400).json({ message: 'Missing required IDs' });
     }
+    // Build SQL
+    const { sql, values } = buildDeleteUserExerciseSql(UserExerciseID, UserUserID);
 
-    const sql = `DELETE FROM UserExercises WHERE UserExerciseID = ? AND UserUserID = ?`;
     const result = await database.query(sql, [UserExerciseID, UserUserID]);
 
     if (result[0].affectedRows === 1) {
@@ -310,13 +256,15 @@ const deleteExerciseRecordController = async (req, res) => {
   
 
 // Endpoints ------------------------------------------------
-app.get('/api/exercises', exercisesController);
-app.get('/api/exercises/:ExerciseID', exercisesController);
-app.get('/api/exercises/exercise-types/:ExerciseExerciseTypeID', exercisesOfTypeController);
 
+// Exercises
+app.use('/api/exercises', exercisesRouter);
+
+// Exercise Types
 app.get('/api/exerciseTypes', exerciseTypesController);
 app.get('/api/exerciseTypes/:ExerciseTypeID', exerciseTypesController);
 
+// User Exercises
 app.get('/api/userExercises', allUserExercisesController);
 app.get('/api/userExercises/:UserUserID', userExercisesController);
 app.post('/api/userExercises', recordExerciseController);
