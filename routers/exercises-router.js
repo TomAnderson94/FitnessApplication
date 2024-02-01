@@ -18,7 +18,7 @@ const buildExercisesSelectSql = (id) => {
     }
   
     return sql;
-  }
+  };
 
 // Data Accessors ----------------------------------------
 

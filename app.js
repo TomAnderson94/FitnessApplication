@@ -3,6 +3,7 @@ import express from 'express';
 import database from './database.js';
 import cors from 'cors';
 import exercisesRouter from './routers/exercises-router.js';
+import exerciseTypesRouter from './routers/exercise-types-router.js';
 
 // Configure Express App ------------------------------------
 const app = new express();
@@ -13,21 +14,6 @@ app.use(express.json());
 
 
 // Controllers ----------------------------------------------
-
-const buildExerciseTypesSelectSql = (id, variant) => {
-  let sql = '';
-  let table = 'ExerciseTypes';
-  let fields = ['ExerciseTypeID', 'ExerciseTypeName', 'ExerciseTypeURL'];
-
-  switch (variant) {
-    default:
-      sql = `SELECT ${fields} FROM ${table}`;
-      if (id) sql += ` WHERE ExerciseTypeID=${id}`;
-  }
-
-  return sql;
-
-};
 
 const buildUserExercisesSelectSql = (id, variant) => {
   let sql = '';
@@ -57,32 +43,6 @@ const buildUserExerciseInsertSql = () => {
   return `INSERT INTO ${table} (${fields.join(', ')}) VALUES (${placeholders})`;
 };
 
-
-const exerciseTypesController = async (req,res) => {
-    const id = req.params.ExerciseTypeID;
-    // Build SQL 
-    const sql = buildExerciseTypesSelectSql(id, null);
-    // Execute query
-    let isSuccess = false;
-    let message = "";
-    let result = null;
-    try {
-        [result] = await database.query(sql);
-        if(result.length === 0) message = 'No record(s) found';
-        else {
-            isSuccess = true;
-            message = 'Record(s) successfully found';
-        }
-    }
-    catch (error) {
-        message = `Failed to execute query: ${error.message}`;
-    }
-    
-    // Responses
-    isSuccess
-    ? res.status(200).json(result)
-    : res.status(400).json({ message });
-};
 
 const recordUserExerciseController = async (req, res) => {
     try {
@@ -309,8 +269,7 @@ const loginController = async (req, res) => {
 app.use('/api/exercises', exercisesRouter);
 
 // Exercise Types
-app.get('/api/exerciseTypes', exerciseTypesController);
-app.get('/api/exerciseTypes/:ExerciseTypeID', exerciseTypesController);
+app.use('/api/exerciseTypes', exerciseTypesRouter);
 
 // User Exercises
 app.get('/api/userExercises', allUserExercisesController);
