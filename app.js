@@ -50,6 +50,13 @@ const buildUserExerciseDeleteSql = (userExerciseId, userUserId) => {
   return { sql, values };
 };
 
+const buildUserExerciseInsertSql = () => {
+  let table = 'UserExercises';
+  let fields = ['UserUserID', 'ExerciseExerciseID', 'Weight', 'Reps', 'Sets', 'Date'];
+  let placeholders = fields.map(() => '?').join(', ');
+  return `INSERT INTO ${table} (${fields.join(', ')}) VALUES (${placeholders})`;
+};
+
 
 const exerciseTypesController = async (req,res) => {
     const id = req.params.ExerciseTypeID;
@@ -98,8 +105,7 @@ const recordUserExerciseController = async (req, res) => {
         return res.status(400).json({ message: 'Weight must be a number' });
       }
     
-      const sql = `INSERT INTO UserExercises (UserUserID, ExerciseExerciseID, Weight, Reps, Sets, Date)
-                   VALUES (?, ?, ?, ?, ?, ?)`;
+      const sql = buildUserExerciseInsertSql();
       const result = await database.query(sql, [
         UserUserID,
         ExerciseExerciseID,
