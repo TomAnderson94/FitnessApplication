@@ -27,7 +27,35 @@ const buildExerciseTypesSelectSql = (id, variant) => {
 
   return sql;
 
-}
+};
+
+const buildUserExercisesSelectSql = (id, variant) => {
+  let sql = '';
+  let table = 'UserExercises';
+  let fields = ['UserExerciseID', 'UserUserID', 'ExerciseExerciseID', 'Weight', 'Reps', 'Sets', 'Date'];
+
+  switch (variant) {
+    default:
+      sql = `SELECT ${fields.join(', ')} FROM ${table}`;
+      if (id) sql += ` WHERE UserUserID=${id}`;
+  }
+
+  return sql;
+};
+
+
+
+/*
+const buildSetFields = (fields) => fields.reduce((setSQL, field, index) =>
+  setSQL + `${field}=:${field}` + ((index === fields.length - 1) ? '' : ', '), 'SET ');
+
+
+  
+  const buildRecordUserExerciseCreateSql = (record) => {
+    let table = 'UserExercises';
+    let mutableFields = ['UserUserID', 'ExerciseExerciseID', 'Weight', 'Reps', 'Sets', 'Date'];
+    return `INSERT INTO ${table} ` + buildSetFields(mutableFields);
+  };*/
 
 const buildDeleteUserExerciseSql = (userExerciseId, userUserId) => {
   const table = 'UserExercises';
@@ -63,21 +91,8 @@ const buildDeleteUserExerciseSql = (userExerciseId, userUserId) => {
     : res.status(400).json({ message });
  };
 
-/*const helloController = (req,res) => res.send("Hi, my name is Server");
-const addController = (req,res) => {
-    const var1 = req.params.var1;
-    const var2 = req.params.var2;
-    const result = {
-        operation: "addition",
-        operand1: var1,
-        operand2: var2,
-        result: parseInt(var1) + parseInt(var2),
-        message: 'Hope you have a good day'
-    };
-    res.json(result);
-}*/
 
-const recordExerciseController = async (req, res) => {
+const recordUserExerciseController = async (req, res) => {
     try {
       // Hardcoded UserUserID for testing purposes ('1' represents an actual ID from the Users table)
       const UserUserID = 1;
@@ -127,12 +142,7 @@ const userExercisesController = async (req, res) => {
   const id = req.params.UserUserID; 
   console.log(id)
   
-
-  const table = 'UserExercises';
-  const whereField = 'UserUserID';
-  const fields = ['UserExerciseID', 'UserUserID', 'ExerciseExerciseID', 'Weight', 'Reps', 'Sets', 'Date'];
-  const extendedTable = `${table} LEFT JOIN Exercises ON UserExercises.ExerciseExerciseID=Exercises.ExerciseID`;
-  const sql = `SELECT ${fields} FROM ${extendedTable} WHERE ${whereField}=${id}`;
+  const sql = buildUserExercisesSelectSql(id, null);
   console.log(sql);
   try {
     const [results] = await database.query(sql, [id]);
@@ -314,7 +324,7 @@ app.get('/api/exerciseTypes/:ExerciseTypeID', exerciseTypesController);
 // User Exercises
 app.get('/api/userExercises', allUserExercisesController);
 app.get('/api/userExercises/:UserUserID', userExercisesController);
-app.post('/api/userExercises', recordExerciseController);
+app.post('/api/userExercises', recordUserExerciseController);
 
 app.put('/api/userExercises/:UserExerciseID/:UserUserID', updateExerciseRecordController);
 app.delete('/api/userExercises/:UserExerciseID/:UserUserID', deleteExerciseRecordController);
