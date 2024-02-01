@@ -100,7 +100,6 @@ const userExercisesController = async (req, res) => {
   }
 };
 
-
 const allUserExercisesController = async (req, res) => {
  // const sql = 'SELECT * FROM UserExercises';
   const table = 'UserExercises';
@@ -120,7 +119,6 @@ const allUserExercisesController = async (req, res) => {
     res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
-
 
 const updateExerciseRecordController = async (req, res) => {
   try {    console.log('Body: ', req.body);
@@ -178,7 +176,6 @@ console.log('Params: ', req.params);
     res.status(500).json({ message: 'Internal server error', error: error.toString(), error: error.message });
   }
 };
-
 
 const deleteUserExerciseRecordController = async (req, res) => {
   try {
