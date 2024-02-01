@@ -43,29 +43,15 @@ const buildUserExercisesSelectSql = (id, variant) => {
   return sql;
 };
 
-
-
-/*
-const buildSetFields = (fields) => fields.reduce((setSQL, field, index) =>
-  setSQL + `${field}=:${field}` + ((index === fields.length - 1) ? '' : ', '), 'SET ');
-
-
-  
-  const buildRecordUserExerciseCreateSql = (record) => {
-    let table = 'UserExercises';
-    let mutableFields = ['UserUserID', 'ExerciseExerciseID', 'Weight', 'Reps', 'Sets', 'Date'];
-    return `INSERT INTO ${table} ` + buildSetFields(mutableFields);
-  };*/
-
-const buildDeleteUserExerciseSql = (userExerciseId, userUserId) => {
+const buildUserExerciseDeleteSql = (userExerciseId, userUserId) => {
   const table = 'UserExercises';
   let sql = `DELETE FROM ${table} WHERE UserExerciseID = ? AND UserUserID = ?`;
   const values = [userExerciseId, userUserId];
   return { sql, values };
-}
+};
 
 
- const exerciseTypesController = async (req,res) => {
+const exerciseTypesController = async (req,res) => {
     const id = req.params.ExerciseTypeID;
     // Build SQL 
     const sql = buildExerciseTypesSelectSql(id, null);
@@ -89,8 +75,7 @@ const buildDeleteUserExerciseSql = (userExerciseId, userUserId) => {
     isSuccess
     ? res.status(200).json(result)
     : res.status(400).json({ message });
- };
-
+};
 
 const recordUserExerciseController = async (req, res) => {
     try {
@@ -133,17 +118,16 @@ const recordUserExerciseController = async (req, res) => {
       console.error(error);
       res.status(500).json({ message: 'Internal server error', error: error.toString() });
     }
-  };
-
+};
 
 const userExercisesController = async (req, res) => {
   console.log("there:");
   console.log(req.params)
   const id = req.params.UserUserID; 
-  console.log(id)
+  console.log(id);
   
   const sql = buildUserExercisesSelectSql(id, null);
-  console.log(sql);
+  console.log("SQL :", sql);
   try {
     const [results] = await database.query(sql, [id]);
     if (results.length === 0) {
@@ -155,6 +139,7 @@ const userExercisesController = async (req, res) => {
     res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
+
 
 const allUserExercisesController = async (req, res) => {
  // const sql = 'SELECT * FROM UserExercises';
@@ -235,7 +220,7 @@ console.log('Params: ', req.params);
 };
 
 
-const deleteExerciseRecordController = async (req, res) => {
+const deleteUserExerciseRecordController = async (req, res) => {
   try {
     const UserExerciseID = req.params.UserExerciseID;
     const UserUserID = req.params.UserUserID; 
@@ -247,7 +232,7 @@ const deleteExerciseRecordController = async (req, res) => {
       return res.status(400).json({ message: 'Missing required IDs' });
     }
     // Build SQL
-    const { sql, values } = buildDeleteUserExerciseSql(UserExerciseID, UserUserID);
+    const { sql, values } = buildUserExerciseDeleteSql(UserExerciseID, UserUserID);
 
     const result = await database.query(sql, [UserExerciseID, UserUserID]);
 
@@ -327,7 +312,7 @@ app.get('/api/userExercises/:UserUserID', userExercisesController);
 app.post('/api/userExercises', recordUserExerciseController);
 
 app.put('/api/userExercises/:UserExerciseID/:UserUserID', updateExerciseRecordController);
-app.delete('/api/userExercises/:UserExerciseID/:UserUserID', deleteExerciseRecordController);
+app.delete('/api/userExercises/:UserExerciseID/:UserUserID', deleteUserExerciseRecordController);
 
 // Login
 app.post('/api/login', loginController);
