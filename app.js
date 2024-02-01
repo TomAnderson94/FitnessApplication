@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import exercisesRouter from './routers/exercises-router.js';
 import exerciseTypesRouter from './routers/exercise-types-router.js';
-import userExercisesRouter from '.routers/user-exercises-router.js';
+import userExercisesRouter from './routers/user-exercises-router.js';
 
 // Configure Express App ------------------------------------
 const app = new express();
