@@ -38,10 +38,11 @@ const buildUserExercisesSelectSql = (id, variant) => {
 
 // Controllers -------------------------------------------
 
-const recordUserExerciseController = async (req, res) => {
+const createUserExercisesController = async (req, res) => {
     try {
-      // Hardcoded UserUserID for testing purposes ('1' represents an actual ID from the Users table)
+      // Hardcoded UserUserID for demonstration purposes ('1' represents an actual ID from the Users table)
       const UserUserID = 1;
+      //const id = req.params.UserUserID
       const {
         ExerciseExerciseID,
         Weight,
@@ -80,7 +81,7 @@ const recordUserExerciseController = async (req, res) => {
     }
 };
 
-const userExercisesController = async (req, res) => {
+const readUserExercisesController = async (req, res) => {
   console.log("there:");
   console.log(req.params)
   const id = req.params.UserUserID; 
@@ -100,7 +101,7 @@ const userExercisesController = async (req, res) => {
   }
 };
 
-const allUserExercisesController = async (req, res) => {
+const readAllUserExercisesController = async (req, res) => {
  // const sql = 'SELECT * FROM UserExercises';
   const table = 'UserExercises';
   //const whereField = 'UserUserID';
@@ -120,7 +121,7 @@ const allUserExercisesController = async (req, res) => {
   }
 };
 
-const updateExerciseRecordController = async (req, res) => {
+const updateUserExercisesController = async (req, res) => {
   try {    console.log('Body: ', req.body);
 console.log('Params: ', req.params);
     const UserExerciseID = req.params.UserExerciseID;
@@ -206,11 +207,11 @@ const deleteUserExerciseRecordController = async (req, res) => {
 
 // Endpoints ---------------------------------------------
 
-router.get('/', allUserExercisesController);
-router.get('/:UserUserID', userExercisesController);
-router.post('/', recordUserExerciseController);
+router.get('/', readAllUserExercisesController);
+router.get('/:UserUserID', readUserExercisesController);
+router.post('/', createUserExercisesController);
 
-router.put('/:UserExerciseID/:UserUserID', updateExerciseRecordController);
+router.put('/:UserExerciseID/:UserUserID', updateUserExercisesController);
 router.delete('/:UserExerciseID/:UserUserID', deleteUserExerciseRecordController);
 
 
