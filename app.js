@@ -49,6 +49,11 @@ const loginController = async (req, res) => {
   try {
     const { username } = req.body;
 
+    // Check if username is provided
+    if (!username) {
+      return res.status(400).json({ message: 'Username is required' });
+    }
+
     // Check to assign user type
     let userType;
     if (username.includes('.exerciser')) {
@@ -58,7 +63,7 @@ const loginController = async (req, res) => {
     } else if (username.includes('.admin')) {
       userType = 'admin';
     } else {
-      return res.status(401).json({ message: 'Login failed' });
+      return res.status(401).json({ message: 'Login failed, invalid username' });
     }
 
     // Generate a unique User ID 

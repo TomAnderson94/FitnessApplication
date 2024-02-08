@@ -52,20 +52,21 @@ const exercisesController = async (req,res) => {
  };
 
 const exercisesOfTypeController = async (req,res) => {
-    const id = req.params.ExerciseExerciseTypeID; 
+    const id = req.params.ExerciseTypeTypeID; 
+    console.log("id = ", id);
     // Build SQL 
     const table = 'Exercises';
-    const whereField = 'ExerciseExerciseTypeID';
-    const fields = ['ExerciseID', 'ExerciseName', 'ExerciseExerciseTypeID', 'ExerciseURL'];
-    const extendedTable = `${table} LEFT JOIN ExerciseTypes ON Exercises.ExerciseExerciseTypeID=ExerciseTypes.ExerciseTypeID`;
+    const whereField = 'ExerciseTypeTypeID';
+    const fields = ['ExerciseID', 'ExerciseName', 'ExerciseTypeTypeID'];
+    const extendedTable = `${table} LEFT JOIN ExerciseTypes ON Exercises.ExerciseTypeTypeID=ExerciseTypes.ExerciseTypeID`;
     //  const extendedFields;
-    const sql = `SELECT ${fields} FROM ${extendedTable} WHERE ${whereField}=${id}`;
+    const sql = `SELECT ${fields.join(', ')} FROM ${extendedTable} WHERE ${whereField}=?`;
     // Execute query
     let isSuccess = false;
     let message = "";
     let result = null;
     try {
-        [result] = await database.query(sql);
+        [result] = await database.query(sql,[id]);
         if(result.length === 0) message = 'No record(s) found';
         else {
             isSuccess = true;
@@ -86,6 +87,6 @@ const exercisesOfTypeController = async (req,res) => {
 
 router.get('/', exercisesController);
 router.get('/:ExerciseID', exercisesController);
-router.get('/exercise-types/:ExerciseExerciseTypeID', exercisesOfTypeController);
+router.get('/exercise-types/:ExerciseTypeTypeID', exercisesOfTypeController);
 
 export default router;
