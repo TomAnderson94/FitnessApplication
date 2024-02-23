@@ -5,6 +5,7 @@ import exercisesRouter from './routers/exercises-router.js';
 import exerciseTypesRouter from './routers/exercise-types-router.js';
 import userExercisesRouter from './routers/user-exercises-router.js';
 import database from './database.js';
+import cardioExercisesRouter from './routers/cardio-exercises-router.js';
 
 // Configure Express App ------------------------------------
 const app = new express();
@@ -217,6 +218,9 @@ app.get('/api/profiles/:UserID', readProfileController);
 app.post('/api/profiles', createProfileController);
 app.put('/api/profiles/:UserID', updateProfileController);
 app.delete('/api/profiles/:UserID', deleteProfileController);
+
+// Cardio Exercises
+app.use('/api/cardioexercises', cardioExercisesRouter)
 
 
 
