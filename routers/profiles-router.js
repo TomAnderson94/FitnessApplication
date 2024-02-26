@@ -149,10 +149,10 @@ try {
 
 // Endpoints ---------------------------------------------
 
-router.get('/profiles/:UserID', readProfileController);
-router.post('/profiles', createProfileController);
-router.put('/profiles/:UserID/', updateProfileController);
-router.delete('/profiles/:UserID', deleteProfileController);
+router.get('/:UserID', readProfileController);
+router.post('/', createProfileController);
+router.put('/:UserID', updateProfileController);
+router.delete('/:UserID', deleteProfileController);
 
 
 export default router;
