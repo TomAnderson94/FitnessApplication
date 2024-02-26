@@ -5,6 +5,13 @@ const router = Router();
 
 // Query Builders ----------------------------------------
 
+const buildUserExerciseInsertSql = () => {
+  let table = 'UserExercises';
+  let fields = ['UserUserID', 'ExerciseExerciseID', 'Weight', 'Reps', 'Sets', 'Date'];
+  let placeholders = fields.map(() => '?').join(', ');
+  return `INSERT INTO ${table} (${fields.join(', ')}) VALUES (${placeholders})`;
+};
+
 const buildUserExercisesSelectSql = (id, variant) => {
     let sql = '';
     let table = 'UserExercises';
@@ -15,34 +22,39 @@ const buildUserExercisesSelectSql = (id, variant) => {
         sql = `SELECT ${fields.join(', ')} FROM ${table}`;
         if (id) sql += ` WHERE UserUserID=${id}`;
     }
-  
     return sql;
-  };
-  
-  const buildUserExerciseDeleteSql = (userExerciseId, userUserId) => {
-    const table = 'UserExercises';
-    let sql = `DELETE FROM ${table} WHERE UserExerciseID = ? AND UserUserID = ?`;
-    const values = [userExerciseId, userUserId];
-    return { sql, values };
-  };
-  
-  const buildUserExerciseInsertSql = () => {
-    let table = 'UserExercises';
-    let fields = ['UserUserID', 'ExerciseExerciseID', 'Weight', 'Reps', 'Sets', 'Date'];
-    let placeholders = fields.map(() => '?').join(', ');
-    return `INSERT INTO ${table} (${fields.join(', ')}) VALUES (${placeholders})`;
-  };
+};
 
-// Data Accessors ----------------------------------------
+const buildUserExercisesUpdateSql = (ExerciseExerciseID, Weight, Reps, Sets, Date, UserExerciseID, UserUserID) => {
+  let table = 'UserExercises';
+  let fieldsToUpdate = [
+      'ExerciseExerciseID = ?',
+      'Weight = ?',
+      'Reps = ?',
+      'Sets = ?',
+      'Date = ?'
+  ];
+  let conditions = 'UserExerciseID = ? AND UserUserID = ?';
+
+  let sql = `UPDATE ${table} SET ${fieldsToUpdate.join(', ')} WHERE ${conditions}`;
+  let values = [ExerciseExerciseID, Weight, Reps, Sets, Date, UserExerciseID, UserUserID];
+
+  return { sql, values };
+};
+
+const buildUserExerciseDeleteSql = (userExerciseId, userUserId) => {
+  let table = 'UserExercises';
+  let sql = `DELETE FROM ${table} WHERE UserExerciseID = ? AND UserUserID = ?`;
+  const values = [userExerciseId, userUserId];
+  return { sql, values };
+};
 
 
 // Controllers -------------------------------------------
 
 const createUserExercisesController = async (req, res) => {
     try {
-      // Hardcoded UserUserID for demonstration purposes ('1' represents an actual ID from the Users table)
-      const UserUserID = 1;
-      //const id = req.params.UserUserID
+      const UserUserID = req.params.UserUserID
       const {
         ExerciseExerciseID,
         Weight,
@@ -82,10 +94,9 @@ const createUserExercisesController = async (req, res) => {
 };
 
 const readUserExercisesController = async (req, res) => {
-  console.log("there:");
   console.log(req.params)
   const id = req.params.UserUserID; 
-  console.log(id);
+  console.log("id = ", id);
   
   const sql = buildUserExercisesSelectSql(id, null);
   console.log("SQL :", sql);
@@ -102,11 +113,8 @@ const readUserExercisesController = async (req, res) => {
 };
 
 const readAllUserExercisesController = async (req, res) => {
- // const sql = 'SELECT * FROM UserExercises';
   const table = 'UserExercises';
-  //const whereField = 'UserUserID';
   const fields = ['UserExerciseID', 'UserUserID', 'ExerciseExerciseID', 'Weight', 'Reps', 'Sets', 'Date'];
- // const extendedTable = `${table} JOIN Exercises ON UserExercises.ExerciseExerciseID=Exercises.ExerciseID`;
   const sql = `SELECT ${fields} FROM ${table} `;
   console.log(sql);
   try {
@@ -122,11 +130,10 @@ const readAllUserExercisesController = async (req, res) => {
 };
 
 const updateUserExercisesController = async (req, res) => {
-  try {    console.log('Body: ', req.body);
-console.log('Params: ', req.params);
+  try {    
+    console.log('Body: ', req.body);
+    console.log('Params: ', req.params);
     const UserExerciseID = req.params.UserExerciseID;
- //   const UserUserID = req.params.UserUserID; 
-
     const {
       UserUserID,
       ExerciseExerciseID,
@@ -136,10 +143,10 @@ console.log('Params: ', req.params);
       Date,
     } = req.body;
     console.log(`message body:[${JSON.stringify(req.body)}]`);
-    console.log(ExerciseExerciseID);
-    console.log(Weight);
-    console.log(Reps);
-    console.log(Sets);
+    console.log("ID: ", ExerciseExerciseID);
+    console.log("Weight: ", Weight);
+    console.log("Reps: ", Reps);
+    console.log("Sets: ", Sets);
 
 
     // Validate the incoming data
@@ -152,9 +159,7 @@ console.log('Params: ', req.params);
       return res.status(400).json({ message: 'Weight must be a number' });
     }
 
-    const sql = `UPDATE UserExercises 
-                 SET ExerciseExerciseID = ?, Weight = ?, Reps = ?, Sets = ?, Date = ? 
-                 WHERE UserExerciseID = ? AND UserUserID = ?`;
+    const sql = buildUserExercisesUpdateSql(ExerciseExerciseID, Weight, Reps, Sets, Date, UserExerciseID, UserUserID);
     const result = await database.query(sql, [
       ExerciseExerciseID,
       Weight,
@@ -164,8 +169,6 @@ console.log('Params: ', req.params);
       UserExerciseID,
       UserUserID,
     ]);
-
-
 
     if (result[0].affectedRows === 1) {
       res.status(200).json({ message: 'Exercise record updated successfully' });
@@ -190,8 +193,7 @@ const deleteUserExerciseRecordController = async (req, res) => {
       return res.status(400).json({ message: 'Missing required IDs' });
     }
     // Build SQL
-    const { sql, values } = buildUserExerciseDeleteSql(UserExerciseID, UserUserID);
-
+    const sql = buildUserExerciseDeleteSql(UserExerciseID, UserUserID);
     const result = await database.query(sql, [UserExerciseID, UserUserID]);
 
     if (result[0].affectedRows === 1) {

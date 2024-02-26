@@ -5,7 +5,6 @@ const router = Router();
 
 // Query Builders ----------------------------------------
 
-// Function to build SQL query for selecting routines
 const buildRoutinesSelectSql = (id, variant) => {
     let sql = '';
     let table = 'Routines';
@@ -20,7 +19,6 @@ const buildRoutinesSelectSql = (id, variant) => {
     return sql;
 };
 
-// Function to build SQL query for inserting routines
 const buildRoutineInsertSql = () => {
     let table = 'Routines';
     let fields = ['UserID', 'RoutineName', 'RoutineDescription'];
@@ -28,11 +26,8 @@ const buildRoutineInsertSql = () => {
     return `INSERT INTO ${table} (${fields.join(', ')}) VALUES (${placeholders})`;
 };
 
-// Data Accessors ----------------------------------------
-
 // Controllers -------------------------------------------
 
-// Function to create a new routine
 const createRoutineController = async (req, res) => {
     try {
         const { UserID, RoutineName, RoutineDescription } = req.body;
@@ -58,7 +53,6 @@ const createRoutineController = async (req, res) => {
     }
 };
 
-// Function to read all routines
 const readAllRoutinesController = async (req, res) => {
     const sql = buildRoutinesSelectSql(null, null);
     try {

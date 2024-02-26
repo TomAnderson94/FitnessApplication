@@ -5,7 +5,6 @@ const router = Router();
 
 // Query Builders ----------------------------------------
 
-// Function to build SQL query for selecting routine exercises
 const buildRoutineExercisesSelectSql = (id, variant) => {
     let sql = '';
     let table = 'RoutineExercises';
@@ -20,7 +19,6 @@ const buildRoutineExercisesSelectSql = (id, variant) => {
     return sql;
 };
 
-// Function to build SQL query for deleting routine exercises
 const buildRoutineExerciseDeleteSql = (routineExerciseId, routineId) => {
     const table = 'RoutineExercises';
     let sql = `DELETE FROM ${table} WHERE RoutineExerciseID = ? AND RoutinesID = ?`;
@@ -28,7 +26,6 @@ const buildRoutineExerciseDeleteSql = (routineExerciseId, routineId) => {
     return { sql, values };
 };
 
-// Function to build SQL query for inserting routine exercises
 const buildRoutineExerciseInsertSql = () => {
     let table = 'RoutineExercises';
     let fields = ['RoutinesID', 'ExerciseID', '`Order`', 'CustomWeight', 'CustomReps', 'CustomSets', 'CustomDuration', 'CustomDistance', 'CustomAdditionalInfo'];
@@ -36,11 +33,8 @@ const buildRoutineExerciseInsertSql = () => {
     return `INSERT INTO ${table} (${fields.join(', ')}) VALUES (${placeholders})`;
 };
 
-// Data Accessors ----------------------------------------
-
 // Controllers -------------------------------------------
 
-// Function to create a new routine exercise
 const createRoutineExerciseController = async (req, res) => {
     try {
         const {
@@ -86,7 +80,6 @@ const createRoutineExerciseController = async (req, res) => {
     }
 };
 
-// Function to read all routine exercises
 const readAllRoutineExercisesController = async (req, res) => {
     const sql = buildRoutineExercisesSelectSql(null, null);
     try {

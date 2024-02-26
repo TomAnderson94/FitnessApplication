@@ -5,7 +5,6 @@ const router = Router();
 
 // Query Builders ----------------------------------------
 
-// Function to build SQL query for selecting cardio exercises
 const buildCardioExercisesSelectSql = (id, variant) => {
     let sql = '';
     let table = 'CardioExercises';
@@ -20,7 +19,6 @@ const buildCardioExercisesSelectSql = (id, variant) => {
     return sql;
 };
 
-// Function to build SQL query for deleting cardio exercises
 const buildCardioExerciseDeleteSql = (cardioExerciseId, userUserId) => {
     const table = 'CardioExercises';
     let sql = `DELETE FROM ${table} WHERE CardioExerciseID = ? AND UserUserID = ?`;
@@ -28,7 +26,6 @@ const buildCardioExerciseDeleteSql = (cardioExerciseId, userUserId) => {
     return { sql, values };
 };
 
-// Function to build SQL query for inserting cardio exercises
 const buildCardioExerciseInsertSql = () => {
     let table = 'CardioExercises';
     let fields = ['UserUserID', 'ExerciseExerciseID', 'Duration', 'Distance', 'Date'];
@@ -36,11 +33,8 @@ const buildCardioExerciseInsertSql = () => {
     return `INSERT INTO ${table} (${fields.join(', ')}) VALUES (${placeholders})`;
 };
 
-// Data Accessors ----------------------------------------
-
 // Controllers -------------------------------------------
 
-// Function to create a new cardio exercise
 const createCardioExerciseController = async (req, res) => {
     try {
         // Hardcoded UserID for demonstration purposes ('1' represents an actual ID from the Users table)
@@ -82,7 +76,6 @@ const createCardioExerciseController = async (req, res) => {
     }
 };
 
-// Function to read all cardio exercises
 const readAllCardioExercisesController = async (req, res) => {
     const sql = buildCardioExercisesSelectSql(null, null);
     try {
@@ -96,7 +89,6 @@ const readAllCardioExercisesController = async (req, res) => {
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 };
-
 
 // Endpoints ---------------------------------------------
 

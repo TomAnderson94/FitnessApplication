@@ -16,16 +16,12 @@ const buildExercisesSelectSql = (id) => {
     if (id) {
         sql += ` WHERE Exercises.ExerciseID=${id}`;
     }
-  
     return sql;
-  };
-
-// Data Accessors ----------------------------------------
-
+};
 
 // Controllers -------------------------------------------
 
-const exercisesController = async (req,res) => {
+const readExercisesController = async (req,res) => {
     const id = req.params.ExerciseID; // Undefined in the case of /api/exercises endpoint
     // Build SQL 
     const sql = buildExercisesSelectSql(id);
@@ -49,9 +45,9 @@ const exercisesController = async (req,res) => {
     isSuccess
     ? res.status(200).json(result)
     : res.status(400).json({ message });
- };
+};
 
-const exercisesOfTypeController = async (req,res) => {
+const readExercisesOfTypeController = async (req,res) => {
     const id = req.params.ExerciseTypeTypeID; 
     console.log("id = ", id);
     // Build SQL 
@@ -59,7 +55,6 @@ const exercisesOfTypeController = async (req,res) => {
     const whereField = 'ExerciseTypeTypeID';
     const fields = ['ExerciseID', 'ExerciseName', 'ExerciseTypeTypeID'];
     const extendedTable = `${table} LEFT JOIN ExerciseTypes ON Exercises.ExerciseTypeTypeID=ExerciseTypes.ExerciseTypeID`;
-    //  const extendedFields;
     const sql = `SELECT ${fields.join(', ')} FROM ${extendedTable} WHERE ${whereField}=?`;
     // Execute query
     let isSuccess = false;
@@ -76,7 +71,6 @@ const exercisesOfTypeController = async (req,res) => {
     catch (error) {
         message = `Failed to execute query: ${error.message}`;
     }
-
     // Responses
     isSuccess
     ? res.status(200).json(result)
@@ -85,8 +79,8 @@ const exercisesOfTypeController = async (req,res) => {
 
 // Endpoints ---------------------------------------------
 
-router.get('/', exercisesController);
-router.get('/:ExerciseID', exercisesController);
-router.get('/exercise-types/:ExerciseTypeTypeID', exercisesOfTypeController);
+router.get('/', readExercisesController);
+router.get('/:ExerciseID', readExercisesController);
+router.get('/exercise-types/:ExerciseTypeTypeID', readExercisesOfTypeController);
 
 export default router;

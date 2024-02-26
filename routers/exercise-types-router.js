@@ -20,12 +20,9 @@ return sql;
 
 };
 
-// Data Accessors ----------------------------------------
-
-
 // Controllers -------------------------------------------
 
-const exerciseTypesController = async (req,res) => {
+const readExerciseTypesController = async (req,res) => {
     const id = req.params.ExerciseTypeID;
     // Build SQL 
     const sql = buildExerciseTypesSelectSql(id, null);
@@ -44,7 +41,6 @@ const exerciseTypesController = async (req,res) => {
     catch (error) {
         message = `Failed to execute query: ${error.message}`;
     }
-    
     // Responses
     isSuccess
     ? res.status(200).json(result)
@@ -53,7 +49,7 @@ const exerciseTypesController = async (req,res) => {
 
 // Endpoints ---------------------------------------------
 
-router.get('/', exerciseTypesController);
-router.get('/:ExerciseTypeID', exerciseTypesController);
+router.get('/', readExerciseTypesController);
+router.get('/:ExerciseTypeID', readExerciseTypesController);
 
 export default router;
