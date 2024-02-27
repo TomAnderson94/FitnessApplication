@@ -26,21 +26,40 @@ const buildRoutineInsertSql = () => {
     return `INSERT INTO ${table} (${fields.join(', ')}) VALUES (${placeholders})`;
 };
 
+const buildRoutineUpdateSql = (RoutineName, RoutineDescription, RoutineID, UserID) => {
+    let table = 'Routines';
+    let fieldsToUpdate = [
+        'RoutineName = ?',
+        'RoutineDescription = ?',
+    ];
+    let conditions = 'RoutineID = ? AND UserID = ?';
+
+    let sql = `UPDATE ${table} SET ${fieldsToUpdate.join(', ')} WHERE ${conditions}`;
+    let values = [RoutineName, RoutineDescription, RoutineID, UserID];
+    return { sql, values };
+};
+
 // Controllers -------------------------------------------
 
 const createRoutineController = async (req, res) => {
     try {
-        const { UserID, RoutineName, RoutineDescription } = req.body;
+        const UserID = 1;
+        const { 
+            RoutineName, 
+            RoutineDescription 
+        } = req.body;
+        console.log("routine body is : ", req.body);
 
         // Validate the incoming data
-        if (!UserID || !RoutineName || !RoutineDescription) {
+        if (!RoutineName || !RoutineDescription) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
-        // Perform additional validation if needed
-
         const sql = buildRoutineInsertSql();
-        const result = await database.query(sql, [UserID, RoutineName, RoutineDescription]);
+        const result = await database.query(sql, [
+            UserID, 
+            RoutineName, 
+            RoutineDescription]);
 
         if (result[0].affectedRows === 1) {
             res.status(201).json({ message: 'Routine created successfully' });
@@ -54,6 +73,7 @@ const createRoutineController = async (req, res) => {
 };
 
 const readAllRoutinesController = async (req, res) => {
+    console.log(req.params.RoutineName);
     const sql = buildRoutinesSelectSql(null, null);
     try {
         const [results] = await database.query(sql);
@@ -67,9 +87,42 @@ const readAllRoutinesController = async (req, res) => {
     }
 };
 
+const updateRoutinesController = async (req, res) => {
+    try {
+        const routineID = req.params.RoutineID;
+        const id = req.params.UserID;
+        const { 
+        RoutineName, 
+        RoutineDescription, 
+        } = req.body;
+        console.log('Routine Name: ', RoutineName, 'Routine Desc: ', RoutineDescription);
+        console.log('routineID: ', routineID, 'user id: ', id);
+        console.log('request body: ', req.body);
+
+    
+        // Validate required fields
+        if (!RoutineName || !RoutineDescription) {
+        return res.status(400).json({ message: 'Missing required fields' });
+        }
+    
+        const sql = buildRoutineUpdateSql(RoutineName, RoutineDescription, routineID, id);
+        const result = await database.query(sql, [RoutineName, RoutineDescription, routineID, id]);
+    
+        if (result[0].affectedRows === 1) {
+        res.status(200).json({ message: 'Routines updated successfully' });
+        } else {
+        res.status(400).json({ message: 'Failed to update routines' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error', error: error.toString() });
+    }
+};
+
 // Endpoints ---------------------------------------------
 
-router.get('/', readAllRoutinesController);
+router.get('/:UserID', readAllRoutinesController);
 router.post('/', createRoutineController);
+router.put('/:RoutineID/:UserID', updateRoutinesController)
 
 export default router;

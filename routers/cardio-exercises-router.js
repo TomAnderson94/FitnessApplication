@@ -62,6 +62,7 @@ const createCardioExerciseController = async (req, res) => {
             AdditionalInfo,
             Date,
         } = req.body;
+        console.log("cardio body is : ", req.body);
 
         // Validate the incoming data
         if (!ExerciseExerciseID || !Duration || !Distance || !Date) {
