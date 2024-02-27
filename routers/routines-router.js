@@ -73,7 +73,7 @@ const createRoutineController = async (req, res) => {
 };
 
 const readAllRoutinesController = async (req, res) => {
-    console.log(req.params.RoutineName);
+    console.log("params routine name: ", req.params.RoutineName);
     const sql = buildRoutinesSelectSql(null, null);
     try {
         const [results] = await database.query(sql);

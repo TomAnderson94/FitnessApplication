@@ -8,7 +8,7 @@ const router = Router();
 const buildRoutineExercisesSelectSql = (id, variant) => {
     let sql = '';
     let table = 'RoutineExercises';
-    let fields = ['RoutinesID', 'ExerciseID', '`Order`', 'CustomWeight', 'CustomReps', 'CustomSets', 'CustomDuration', 'CustomDistance', 'CustomAdditionalInfo'];
+    let fields = ['RoutineExerciseID', 'RoutinesID', 'ExerciseID', '`Order`', 'CustomWeight', 'CustomReps', 'CustomSets', 'CustomDuration', 'CustomDistance', 'CustomAdditionalInfo'];
 
     switch (variant) {
         default:
@@ -81,6 +81,8 @@ const createRoutineExerciseController = async (req, res) => {
 };
 
 const readAllRoutineExercisesController = async (req, res) => {
+    console.log("routine exercises params: ", req.params);
+    
     const sql = buildRoutineExercisesSelectSql(null, null);
     try {
         const [results] = await database.query(sql);
@@ -96,7 +98,7 @@ const readAllRoutineExercisesController = async (req, res) => {
 
 // Endpoints ---------------------------------------------
 
-router.get('/', readAllRoutineExercisesController);
+router.get('/:RoutinesID', readAllRoutineExercisesController);
 router.post('/', createRoutineExerciseController);
 
 export default router;

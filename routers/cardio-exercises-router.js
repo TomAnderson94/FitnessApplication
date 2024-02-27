@@ -96,6 +96,7 @@ const createCardioExerciseController = async (req, res) => {
 };
 
 const readAllCardioExercisesController = async (req, res) => {
+    console.log("cardio params: ", req.params);
     const sql = buildCardioExercisesSelectSql(null, null);
     try {
         const [results] = await database.query(sql);

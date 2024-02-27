@@ -109,12 +109,11 @@ app.use('/api/profiles', profilesRouter);
 // Cardio Exercises
 app.use('/api/cardioexercises', cardioExercisesRouter);
 
-// Routine Exercises
-app.use('/api/routineexercises', routineExercisesRouter);
-
 // Routines
 app.use('/api/routines', routinesRouter);
 
+// Routine Exercises
+app.use('/api/routineexercises', routineExercisesRouter);
 
 
 // Start Server ---------------------------------------------
