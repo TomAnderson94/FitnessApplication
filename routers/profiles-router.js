@@ -25,6 +25,21 @@ const buildProfilesSelectSql = (id, variant) => {
     return sql;
 };
 
+const buildAllProfilesSelectSql = (id, variant) => {
+    let sql = '';
+    let table = 'Profiles';
+    let fields = ['ProfileID', 'UserID', 'ProfileName', 'ProfileGoals', 'ProfileInterests', 'ProfileURL'];
+
+    switch (variant) {
+        default:
+            sql = `SELECT ${fields.join(', ')} FROM ${table}`;
+            break;
+    }
+    return sql;
+};
+
+
+
 const buildProfileUpdateSql = (ProfileName, ProfileGoals, ProfileInterests, ProfileURL, id) => {
     let table = 'Profiles';
     let fieldsToUpdate = [
@@ -61,6 +76,22 @@ const readProfileController = async (req, res) => {
         res.status(500).json({ message: 'Internal server error', error: error.toString() });
     }
 };
+
+const readAllProfilesController = async (req, res) => {
+    console.log("All profiles req.params: ", req.params)
+    const sql = buildAllProfilesSelectSql(); 
+    try {
+        const [results] = await database.query(sql);
+        if (!results || results.length === 0) {
+            return res.status(404).json({ message: 'No profiles found' });
+        }
+        res.status(200).json(results);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error', error: error.toString() });
+    }
+};
+
 
 const createProfileController = async (req, res) => {
     try {
@@ -149,6 +180,7 @@ try {
 
 // Endpoints ---------------------------------------------
 
+router.get('/', readAllProfilesController)
 router.get('/:UserID', readProfileController);
 router.post('/', createProfileController);
 router.put('/:UserID', updateProfileController);
