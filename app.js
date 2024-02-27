@@ -8,6 +8,7 @@ import profilesRouter from './routers/profiles-router.js';
 import cardioExercisesRouter from './routers/cardio-exercises-router.js';
 import routineExercisesRouter from './routers/routine-exercises-router.js';
 import routinesRouter from './routers/routines-router.js';
+import stretchingExercisesRouter from './routers/stretching-exercises-router.js'
 
 
 // Configure Express App ------------------------------------
@@ -114,6 +115,10 @@ app.use('/api/routines', routinesRouter);
 
 // Routine Exercises
 app.use('/api/routineexercises', routineExercisesRouter);
+
+// Stretching Exercises
+app.use('/api/stretchingexercises', stretchingExercisesRouter);
+
 
 
 // Start Server ---------------------------------------------
