@@ -94,8 +94,9 @@ const createStretchingExerciseController = async (req, res) => {
     }
 };
 
-const readAllStretchingExercisesController = async (req, res) => {
-    const sql = buildStretchingExercisesSelectSql(req.params.UserID, null);
+const readStretchingExercisesController = async (req, res) => {
+    const id = req.params.UserID;
+    const sql = buildStretchingExercisesSelectSql(id, null);
     console.log("read all stretch params: ", req.params);
     console.log("read all stretch result: ", response.result);
 
@@ -182,7 +183,7 @@ const updateStretchingExercisesController = async (req, res) => {
 
 // Endpoints ---------------------------------------------
 
-router.get('/:UserID', readAllStretchingExercisesController);
+router.get('/:UserID', readStretchingExercisesController);
 router.post('/', createStretchingExerciseController);
 router.put('/:StretchingID/:UserID', updateStretchingExercisesController);
 router.delete('/:StretchingID/:UserID', deleteStretchingExerciseController)
