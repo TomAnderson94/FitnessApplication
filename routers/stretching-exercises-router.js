@@ -98,10 +98,9 @@ const readStretchingExercisesController = async (req, res) => {
     const id = req.params.UserID;
     const sql = buildStretchingExercisesSelectSql(id, null);
     console.log("read all stretch params: ", req.params);
-    console.log("read all stretch result: ", response.result);
 
     try {
-        const [results] = await database.query(sql);
+        const [results] = await database.query(sql, [id]);
         if (results.length === 0) {
             res.status(404).json({ message: 'No stretching exercises found' });
         } else {
