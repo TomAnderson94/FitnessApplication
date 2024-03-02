@@ -13,7 +13,7 @@ const buildRoutinesSelectSql = (id, variant) => {
     switch (variant) {
         default:
             sql = `SELECT ${fields.join(', ')} FROM ${table}`;
-            if (id) sql += ` WHERE RoutineID=${id}`;
+            if (id) sql += ` WHERE UserID=${id}`;
     }
 
     return sql;
@@ -73,8 +73,9 @@ const createRoutineController = async (req, res) => {
 };
 
 const readAllRoutinesController = async (req, res) => {
-    console.log("params routine name: ", req.params.RoutineName);
-    const sql = buildRoutinesSelectSql(null, null);
+    console.log("params user id: ", req.params.UserID);
+    const id = req.params.UserID;
+    const sql = buildRoutinesSelectSql(id, null);
     try {
         const [results] = await database.query(sql);
         if (results.length === 0) {
