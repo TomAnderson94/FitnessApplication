@@ -20,7 +20,7 @@ const buildProfilesSelectSql = (id, variant) => {
     switch (variant) {
         default:
         sql = `SELECT ${fields} FROM ${table}`;
-        if (id) sql += ` WHERE UserID=${id}`;
+        if (id) sql += ` WHERE ProfileID=${id}`;
     }
     return sql;
 };
@@ -48,7 +48,7 @@ const buildProfileUpdateSql = (ProfileName, ProfileGoals, ProfileInterests, Prof
         'ProfileInterests = ?',
         'ProfileURL = ?'
     ];
-    let sql = `UPDATE ${table} SET ${fieldsToUpdate.join(', ')} WHERE UserID = ?`;
+    let sql = `UPDATE ${table} SET ${fieldsToUpdate.join(', ')} WHERE ProfileID = ?`;
     let values = [ProfileName, ProfileGoals, ProfileInterests, ProfileURL, id];
     return { sql, values };
 };
@@ -63,7 +63,7 @@ const buildProfileDeleteSql = (userId) => {
 // Controllers -------------------------------------------
 
 const readProfileController = async (req, res) => {
-    const id = req.params.UserID;
+    const id = req.params.ProfileID;
     const sql = buildProfilesSelectSql(id, null);
     const [result] = await database.query(sql, [id]);
     try {
@@ -181,7 +181,7 @@ try {
 // Endpoints ---------------------------------------------
 
 router.get('/', readAllProfilesController)
-router.get('/:UserID', readProfileController);
+router.get('/:ProfileID', readProfileController);
 router.post('/', createProfileController);
 router.put('/:UserID', updateProfileController);
 router.delete('/:UserID', deleteProfileController);
