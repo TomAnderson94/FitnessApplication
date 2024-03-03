@@ -205,6 +205,6 @@ const updateRoutineExercisesController = async (req, res) => {
 router.get('/:RoutinesID', readAllRoutineExercisesController);
 router.post('/', createRoutineExerciseController);
 router.put('/:RoutineExerciseID/:RoutinesID', updateRoutineExercisesController);
-router.delete('/:RouterExerciseID/:RoutinesID');
+router.delete('/:RoutineExerciseID/:RoutinesID', deleteRoutineExerciseRecordController);
 
 export default router;

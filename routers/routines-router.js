@@ -19,6 +19,20 @@ const buildRoutinesSelectSql = (id, variant) => {
     return sql;
 };
 
+const buildRoutinesSelectRoutineIdSql = (id, variant) => {
+    let sql = '';
+    let table = 'Routines';
+    let fields = ['RoutineID', 'UserID', 'RoutineName', 'RoutineDescription'];
+
+    switch (variant) {
+        default:
+            sql = `SELECT ${fields.join(', ')} FROM ${table}`;
+            if (id) sql += ` WHERE RoutineID=${id}`;
+    }
+
+    return sql;
+};
+
 const buildRoutineInsertSql = () => {
     let table = 'Routines';
     let fields = ['UserID', 'RoutineName', 'RoutineDescription'];
@@ -88,6 +102,23 @@ const readAllRoutinesController = async (req, res) => {
     }
 };
 
+const readRoutineIDRoutinesController = async (req, res) => {
+    console.log("params user id: ", req.params.RoutineID);
+    const routineId = req.params.RoutineID;
+    const userId = req.params.UserID;
+    const sql = buildRoutinesSelectRoutineIdSql(routineId, userId);
+    try {
+        const [results] = await database.query(sql);
+        if (results.length === 0) {
+            res.status(404).json({ message: 'No routines found' });
+        } else {
+            res.status(200).json(results);
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+};
+
 const updateRoutinesController = async (req, res) => {
     try {
         const routineID = req.params.RoutineID;
@@ -123,6 +154,7 @@ const updateRoutinesController = async (req, res) => {
 // Endpoints ---------------------------------------------
 
 router.get('/:UserID', readAllRoutinesController);
+router.get('/:RoutineID/:UserID', readRoutineIDRoutinesController);
 router.post('/', createRoutineController);
 router.put('/:RoutineID/:UserID', updateRoutinesController)
 
