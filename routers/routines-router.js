@@ -53,6 +53,13 @@ const buildRoutineUpdateSql = (RoutineName, RoutineDescription, RoutineID, UserI
     return { sql, values };
 };
 
+const buildRoutinesDeleteSql = (routineId, userId) => {
+    const table = 'Routines';
+    let sql = `DELETE FROM ${table} WHERE RoutineID = ? AND UserID = ?`;
+    const values = [routineId, userId];
+    return { sql, values };
+};
+
 // Controllers -------------------------------------------
 
 const createRoutineController = async (req, res) => {
@@ -151,11 +158,39 @@ const updateRoutinesController = async (req, res) => {
     }
 };
 
+const deleteRoutinesController = async (req, res) => {
+    try {
+      const RoutineID = req.params.RoutineID;
+      const UserID = req.params.UserID; 
+      console.log('Delete Params: ', req.params);
+  
+  
+      // Validate the incoming data ensuring the IDs are provided
+      if (!RoutineID || !UserID) {
+        return res.status(400).json({ message: 'Missing required IDs' });
+      }
+      // Build SQL
+      const sql = buildRoutinesDeleteSql(RoutineID, UserID);
+      const result = await database.query(sql, [RoutineID, UserID]);
+  
+      if (result[0].affectedRows === 1) {
+        res.status(200).json({ message: 'Routine deleted successfully' });
+      } else {
+        res.status(400).json({ message: 'Failed to delete routine or routine not found' });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+  };
+
 // Endpoints ---------------------------------------------
 
 router.get('/:UserID', readAllRoutinesController);
 router.get('/:RoutineID/:UserID', readRoutineIDRoutinesController);
 router.post('/', createRoutineController);
 router.put('/:RoutineID/:UserID', updateRoutinesController)
+router.delete('/:RoutineID/:UserID', deleteRoutinesController)
+
 
 export default router;
