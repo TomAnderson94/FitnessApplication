@@ -54,7 +54,7 @@ const buildUserExerciseDeleteSql = (userExerciseId, userUserId) => {
 
 const createUserExercisesController = async (req, res) => {
     try {
-      const UserUserID = req.params.UserUserID
+      const UserUserID = 1; // Hard coded for demonstration purposes
       const {
         ExerciseExerciseID,
         Weight,
