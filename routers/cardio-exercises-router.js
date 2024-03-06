@@ -185,7 +185,7 @@ const updateCardioExercisesController = async (req, res) => {
 
 // Endpoints ---------------------------------------------
 
-router.get('/:UserID', readAllCardioExercisesController);
+router.get('/', readAllCardioExercisesController);
 router.post('/', createCardioExerciseController);
 router.put('/:CardioID/:UserID', updateCardioExercisesController);
 router.delete('/:CardioID/:UserID', deleteCardioExerciseController)
