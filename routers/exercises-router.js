@@ -8,8 +8,8 @@ const router = Router();
 const buildExercisesSelectSql = (id) => {
     let sql = '';
     const table = 'Exercises';
-    const fields = ['ExerciseID', 'ExerciseTypeTypeID', 'ExerciseName'];
-    const extendedTable = `${table} LEFT JOIN ExerciseTypes ON Exercises.ExerciseTypeTypeID=ExerciseTypes.ExerciseTypeID`;
+    const fields = ['ExerciseID', 'Exercises.ExerciseTypeID', 'ExerciseName'];
+    const extendedTable = `${table} LEFT JOIN ExerciseTypes ON Exercises.ExerciseTypeID=ExerciseTypes.ExerciseTypeID`;
   
     sql = `SELECT ${fields.join(', ')} FROM ${extendedTable}`;
   
@@ -48,13 +48,13 @@ const readExercisesController = async (req,res) => {
 };
 
 const readExercisesOfTypeController = async (req,res) => {
-    const id = req.params.ExerciseTypeTypeID; 
+    const id = req.params.ExerciseTypeID; 
     console.log("id = ", id);
     // Build SQL 
     const table = 'Exercises';
-    const whereField = 'ExerciseTypeTypeID';
-    const fields = ['ExerciseID', 'ExerciseName', 'ExerciseTypeTypeID'];
-    const extendedTable = `${table} LEFT JOIN ExerciseTypes ON Exercises.ExerciseTypeTypeID=ExerciseTypes.ExerciseTypeID`;
+    const whereField = 'ExerciseTypeID';
+    const fields = ['ExerciseID', 'ExerciseName', 'ExerciseTypeID'];
+    const extendedTable = `${table} LEFT JOIN ExerciseTypes ON Exercises.ExerciseTypeID=ExerciseTypes.ExerciseTypeID`;
     const sql = `SELECT ${fields.join(', ')} FROM ${extendedTable} WHERE ${whereField}=?`;
     // Execute query
     let isSuccess = false;
@@ -81,6 +81,6 @@ const readExercisesOfTypeController = async (req,res) => {
 
 router.get('/', readExercisesController);
 router.get('/:ExerciseID', readExercisesController);
-router.get('/exercise-types/:ExerciseTypeTypeID', readExercisesOfTypeController);
+router.get('/exercise-types/:ExerciseTypeID', readExercisesOfTypeController);
 
 export default router;

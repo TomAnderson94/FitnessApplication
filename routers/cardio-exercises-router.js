@@ -76,7 +76,7 @@ const createCardioExerciseController = async (req, res) => {
 
         const sql = buildCardioExerciseInsertSql();
         const result = await database.query(sql, [
-            userUserId,
+            userId,
             ExerciseID,
             Duration,
             Distance,
@@ -112,7 +112,7 @@ const readAllCardioExercisesController = async (req, res) => {
 
 const updateCardioExercisesController = async (req, res) => {
     try {    
-      const CardioID = req.params.CardioID;
+      const CardioExerciseID = req.params.CardioExerciseID;
       const UserID = req.params.UserID;
       const {
         ExerciseID,
@@ -134,7 +134,7 @@ const updateCardioExercisesController = async (req, res) => {
         return res.status(400).json({ message: 'Duration must be a number' });
       }
   
-      const sql = buildCardioExerciseUpdateSql(ExerciseID, Duration, Distance, AdditionalInfo, Date, CardioID, UserID);
+      const sql = buildCardioExerciseUpdateSql(ExerciseID, Duration, Distance, AdditionalInfo, Date, CardioExerciseID, UserID);
 
       const result = await database.query(sql, [
         ExerciseID,
@@ -142,7 +142,7 @@ const updateCardioExercisesController = async (req, res) => {
         Distance,
         AdditionalInfo,
         Date,
-        CardioID,
+        CardioExerciseID,
         UserID,
       ]);
   
@@ -159,7 +159,7 @@ const updateCardioExercisesController = async (req, res) => {
 
   const deleteCardioExerciseController = async (req, res) => {
     try {
-      const CardioID = req.params.CardioID;
+      const CardioExerciseID = req.params.CardioExerciseID;
       const UserID = req.params.UserID; 
       console.log('Delete Params: ', req.params);
   
@@ -169,8 +169,8 @@ const updateCardioExercisesController = async (req, res) => {
         return res.status(400).json({ message: 'Missing required IDs' });
       }
       // Build SQL
-      const sql = buildCardioExerciseDeleteSql(CardioID, UserID);
-      const result = await database.query(sql, [CardioID, UserID]);
+      const sql = buildCardioExerciseDeleteSql(CardioExerciseID, UserID);
+      const result = await database.query(sql, [CardioExerciseID, UserID]);
   
       if (result[0].affectedRows === 1) {
         res.status(200).json({ message: 'Exercise record deleted successfully' });
@@ -187,7 +187,7 @@ const updateCardioExercisesController = async (req, res) => {
 
 router.get('/', readAllCardioExercisesController);
 router.post('/', createCardioExerciseController);
-router.put('/:CardioID/:UserID', updateCardioExercisesController);
-router.delete('/:CardioID/:UserID', deleteCardioExerciseController)
+router.put('/:CardioExerciseID/:UserID', updateCardioExercisesController);
+router.delete('/:CardioExerciseID/:UserID', deleteCardioExerciseController)
 
 export default router;
