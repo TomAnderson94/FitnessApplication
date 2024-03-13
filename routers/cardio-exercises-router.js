@@ -7,7 +7,7 @@ const router = Router();
 
 const buildCardioExerciseInsertSql = () => {
     let table = 'CardioExercises';
-    let fields = ['UserID', 'ExerciseExerciseID', 'Duration', 'Distance', 'AdditionalInfo', 'Date'];
+    let fields = ['UserID', 'ExerciseID', 'Duration', 'Distance', 'AdditionalInfo', 'Date'];
     let placeholders = fields.map(() => '?').join(', ');
     return `INSERT INTO ${table} (${fields.join(', ')}) VALUES (${placeholders})`;
 };
@@ -15,7 +15,7 @@ const buildCardioExerciseInsertSql = () => {
 const buildCardioExercisesSelectSql = (id, variant) => {
     let sql = '';
     let table = 'CardioExercises';
-    let fields = ['ID', 'UserID', 'ExerciseExerciseID', 'Duration', 'Distance', 'AdditionalInfo', 'Date'];
+    let fields = ['CardioExerciseID', 'UserID', 'ExerciseID', 'Duration', 'Distance', 'AdditionalInfo', 'Date'];
   
     switch (variant) {
         default:
@@ -25,26 +25,26 @@ const buildCardioExercisesSelectSql = (id, variant) => {
     return sql;
 };
 
-const buildCardioExerciseUpdateSql = (ExerciseExerciseID, Duration, Distance, AdditionalInfo, Date, CardioID, UserID) => {
+const buildCardioExerciseUpdateSql = (ExerciseID, Duration, Distance, AdditionalInfo, Date, CardioID, UserID) => {
     let table = 'CardioExercises';
     let fieldsToUpdate = [
-      'ExerciseExerciseID = ?',
+      'ExerciseID = ?',
       'Duration = ?',
       'Distance = ?',
       'AdditionalInfo = ?',
       'Date = ?'
     ];
-    let conditions = 'ID = ? AND UserID = ?';
+    let conditions = 'CardioExerciseID = ? AND UserID = ?';
   
     let sql = `UPDATE ${table} SET ${fieldsToUpdate.join(', ')} WHERE ${conditions}`;
-    let values = [ExerciseExerciseID, Duration, Distance, AdditionalInfo, Date, CardioID, UserID];
+    let values = [ExerciseID, Duration, Distance, AdditionalInfo, Date, CardioID, UserID];
 
     return { sql, values };
 };
   
 const buildCardioExerciseDeleteSql = (cardioExerciseId, userId) => {
     const table = 'CardioExercises';
-    let sql = `DELETE FROM ${table} WHERE ID = ? AND UserID = ?`;
+    let sql = `DELETE FROM ${table} WHERE CardioExerciseID = ? AND UserID = ?`;
     const values = [cardioExerciseId, userId];
     return { sql, values };
 };
@@ -54,9 +54,9 @@ const buildCardioExerciseDeleteSql = (cardioExerciseId, userId) => {
 const createCardioExerciseController = async (req, res) => {
     try {
         // Hardcoded UserID for demonstration purposes ('1' represents an actual ID from the Users table)
-        const userUserId = 1;
+        const userId = 1;
         const {
-            ExerciseExerciseID,
+            ExerciseID,
             Duration,
             Distance,
             AdditionalInfo,
@@ -65,7 +65,7 @@ const createCardioExerciseController = async (req, res) => {
         console.log("cardio body is : ", req.body);
 
         // Validate the incoming data
-        if (!ExerciseExerciseID || !Duration || !Distance || !Date) {
+        if (!ExerciseID || !Duration || !Distance || !Date) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
@@ -77,7 +77,7 @@ const createCardioExerciseController = async (req, res) => {
         const sql = buildCardioExerciseInsertSql();
         const result = await database.query(sql, [
             userUserId,
-            ExerciseExerciseID,
+            ExerciseID,
             Duration,
             Distance,
             AdditionalInfo,
@@ -115,7 +115,7 @@ const updateCardioExercisesController = async (req, res) => {
       const CardioID = req.params.CardioID;
       const UserID = req.params.UserID;
       const {
-        ExerciseExerciseID,
+        ExerciseID,
         Duration,
         Distance,
         AdditionalInfo,
@@ -125,7 +125,7 @@ const updateCardioExercisesController = async (req, res) => {
       console.log('Duration: ', Duration, 'Distance: ', Distance, 'AdditionalInfo: ', AdditionalInfo);
 
       // Validate the incoming data
-      if (UserID === undefined || !ExerciseExerciseID || !Duration || !Distance || !AdditionalInfo || !Date) {
+      if (UserID === undefined || !ExerciseID || !Duration || !Distance || !AdditionalInfo || !Date) {
         return res.status(400).json({ message: 'Missing required fields' });
       }
   
@@ -134,10 +134,10 @@ const updateCardioExercisesController = async (req, res) => {
         return res.status(400).json({ message: 'Duration must be a number' });
       }
   
-      const sql = buildCardioExerciseUpdateSql(ExerciseExerciseID, Duration, Distance, AdditionalInfo, Date, CardioID, UserID);
+      const sql = buildCardioExerciseUpdateSql(ExerciseID, Duration, Distance, AdditionalInfo, Date, CardioID, UserID);
 
       const result = await database.query(sql, [
-        ExerciseExerciseID,
+        ExerciseID,
         Duration,
         Distance,
         AdditionalInfo,
