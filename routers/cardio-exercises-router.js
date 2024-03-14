@@ -165,7 +165,7 @@ const updateCardioExercisesController = async (req, res) => {
   
   
       // Validate the incoming data ensuring the IDs are provided
-      if (!CardioID || !UserID) {
+      if (!CardioExerciseID || !UserID) {
         return res.status(400).json({ message: 'Missing required IDs' });
       }
       // Build SQL
