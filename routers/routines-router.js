@@ -110,7 +110,7 @@ const readAllRoutinesController = async (req, res) => {
 };
 
 const readRoutineIDRoutinesController = async (req, res) => {
-    console.log("params user id: ", req.params.RoutineID);
+    console.log("params routine id: ", req.params.RoutineID);
     const routineId = req.params.RoutineID;
     const userId = req.params.UserID;
     const sql = buildRoutinesSelectRoutineIdSql(routineId, userId);
