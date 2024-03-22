@@ -6,18 +6,16 @@ const router = Router();
 // Query Builders ----------------------------------------
 
 const buildExerciseTypesSelectSql = (id, variant) => {
-let sql = '';
-let table = 'ExerciseTypes';
-let fields = ['ExerciseTypeID', 'ExerciseTypeName', 'ExerciseTypeURL'];
+    let sql = '';
+    let table = 'ExerciseTypes';
+    let fields = ['ExerciseTypeID', 'ExerciseTypeName', 'ExerciseTypeURL'];
 
-switch (variant) {
-    default:
-    sql = `SELECT ${fields} FROM ${table}`;
-    if (id) sql += ` WHERE ExerciseTypeID=${id}`;
-}
-
-return sql;
-
+    switch (variant) {
+        default:
+        sql = `SELECT ${fields} FROM ${table}`;
+        if (id) sql += ` WHERE ExerciseTypeID=${id}`;
+    }
+    return sql;
 };
 
 // Controllers -------------------------------------------

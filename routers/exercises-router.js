@@ -19,6 +19,18 @@ const buildExercisesSelectSql = (id) => {
     return sql;
 };
 
+const buildExercisesOfTypeSelectSql = (id) => {
+    let sql = '';
+    const table = 'Exercises';
+    const whereField = 'ExerciseTypeID';
+    const fields = ['ExerciseID', 'ExerciseName', 'ExerciseTypeID'];
+    const extendedTable = `${table} LEFT JOIN ExerciseTypes ON Exercises.ExerciseTypeID=ExerciseTypes.ExerciseTypeID`;
+    
+    sql = `SELECT ${fields.join(', ')} FROM ${extendedTable} WHERE ${whereField}=?`;
+
+    return sql;
+};
+
 // Controllers -------------------------------------------
 
 const readExercisesController = async (req,res) => {
@@ -51,11 +63,7 @@ const readExercisesOfTypeController = async (req,res) => {
     const id = req.params.ExerciseTypeID; 
     console.log("id = ", id);
     // Build SQL 
-    const table = 'Exercises';
-    const whereField = 'ExerciseTypeID';
-    const fields = ['ExerciseID', 'ExerciseName', 'ExerciseTypeID'];
-    const extendedTable = `${table} LEFT JOIN ExerciseTypes ON Exercises.ExerciseTypeID=ExerciseTypes.ExerciseTypeID`;
-    const sql = `SELECT ${fields.join(', ')} FROM ${extendedTable} WHERE ${whereField}=?`;
+    buildExercisesOfTypeSelectSql(id);
     // Execute query
     let isSuccess = false;
     let message = "";

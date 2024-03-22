@@ -38,8 +38,6 @@ const buildAllProfilesSelectSql = (id, variant) => {
     return sql;
 };
 
-
-
 const buildProfileUpdateSql = (ProfileName, ProfileGoals, ProfileInterests, ProfileURL, id) => {
     let table = 'Profiles';
     let fieldsToUpdate = [
@@ -92,7 +90,6 @@ const readAllProfilesController = async (req, res) => {
     }
 };
 
-
 const createProfileController = async (req, res) => {
     try {
       const { 
@@ -126,56 +123,57 @@ const createProfileController = async (req, res) => {
 };
   
 const updateProfileController = async (req, res) => {
-try {
-    const id = req.params.UserID;
-    const { 
-    ProfileName, 
-    ProfileGoals, 
-    ProfileInterests, 
-    ProfileURL 
-    } = req.body;
+    try {
+        const id = req.params.UserID;
+        const { 
+        ProfileName, 
+        ProfileGoals, 
+        ProfileInterests, 
+        ProfileURL 
+        } = req.body;
 
-    // Validate required fields
-    if (!ProfileName || !ProfileGoals || !ProfileInterests || !ProfileURL) {
-    return res.status(400).json({ message: 'Missing required fields' });
+        // Validate required fields
+        if (!ProfileName || !ProfileGoals || !ProfileInterests || !ProfileURL) {
+        return res.status(400).json({ message: 'Missing required fields' });
+        }
+
+        // Update the user's profile in the database
+        const sql = buildProfileUpdateSql(ProfileName, ProfileGoals, ProfileInterests, ProfileURL, id);
+        const result = await database.query(sql, [ProfileName, ProfileGoals, ProfileInterests, ProfileURL, id]);
+
+        if (result[0].affectedRows === 1) {
+        // If the profile is successfully updated, respond with a 200 status code
+        res.status(200).json({ message: 'Profile updated successfully' });
+        } else {
+        // If update fails for any reason, respond with a 400 status code
+        res.status(400).json({ message: 'Failed to update profile' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error', error: error.toString() });
     }
-
-    // Update the user's profile in the database
-    const sql = buildProfileUpdateSql(ProfileName, ProfileGoals, ProfileInterests, ProfileURL, id);
-    const result = await database.query(sql, [ProfileName, ProfileGoals, ProfileInterests, ProfileURL, id]);
-
-    if (result[0].affectedRows === 1) {
-    // If the profile is successfully updated, respond with a 200 status code
-    res.status(200).json({ message: 'Profile updated successfully' });
-    } else {
-    // If update fails for any reason, respond with a 400 status code
-    res.status(400).json({ message: 'Failed to update profile' });
-    }
-} catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error', error: error.toString() });
-}
 };
 
 const deleteProfileController = async (req, res) => {
-try {
-    const UserID = req.params.UserID;
 
-    // Delete the user's profile from the database
-    const sql = buildProfileDeleteSql(UserID);
-    const result = await database.query(sql, [UserID]);
+    try {
+        const UserID = req.params.UserID;
 
-    if (result[0].affectedRows === 1) {
-    // If the profile is successfully deleted, respond with a 200 status code
-    res.status(200).json({ message: 'Profile deleted successfully' });
-    } else {
-    // If deletion fails or no profile is found, respond with a 400 status code
-    res.status(400).json({ message: 'Failed to delete profile or profile not found' });
+        // Delete the user's profile from the database
+        const sql = buildProfileDeleteSql(UserID);
+        const result = await database.query(sql, [UserID]);
+
+        if (result[0].affectedRows === 1) {
+        // If the profile is successfully deleted, respond with a 200 status code
+        res.status(200).json({ message: 'Profile deleted successfully' });
+        } else {
+        // If deletion fails or no profile is found, respond with a 400 status code
+        res.status(400).json({ message: 'Failed to delete profile or profile not found' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error', error: error.toString() });
     }
-} catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error', error: error.toString() });
-}
 };
 
 // Endpoints ---------------------------------------------

@@ -13,16 +13,16 @@ const buildUserExerciseInsertSql = () => {
 };
 
 const buildUserExercisesSelectSql = (id, variant) => {
-    let sql = '';
-    let table = 'UserExercises';
-    let fields = ['UserExerciseID', 'UserID', 'ExerciseID', 'Weight', 'Reps', 'Sets', 'Date'];
-  
-    switch (variant) {
-      default:
-        sql = `SELECT ${fields.join(', ')} FROM ${table}`;
-        if (id) sql += ` WHERE UserID=${id}`;
-    }
-    return sql;
+  let sql = '';
+  let table = 'UserExercises';
+  let fields = ['UserExerciseID', 'UserID', 'ExerciseID', 'Weight', 'Reps', 'Sets', 'Date'];
+
+  switch (variant) {
+    default:
+      sql = `SELECT ${fields.join(', ')} FROM ${table}`;
+      if (id) sql += ` WHERE UserID=${id}`;
+  }
+  return sql;
 };
 
 const buildUserExercisesUpdateSql = (ExerciseID, Weight, Reps, Sets, Date, UserExerciseID, UserID) => {
@@ -53,44 +53,44 @@ const buildUserExerciseDeleteSql = (userExerciseId, userUserId) => {
 // Controllers -------------------------------------------
 
 const createUserExercisesController = async (req, res) => {
-    try {
-      const UserID = 1; // Hard coded for demonstration purposes
-      const {
-        ExerciseID,
-        Weight,
-        Reps,
-        Sets,
-        Date,
-      } = req.body;
+  try {
+    const UserID = 1; // Hard coded for demonstration purposes
+    const {
+      ExerciseID,
+      Weight,
+      Reps,
+      Sets,
+      Date,
+    } = req.body;
 
-    // Validate the incoming data
-    if (!ExerciseID || !Weight || !Reps || !Sets || !Date) {
-        return res.status(400).json({ message: 'Missing required fields' });
-      }
-    // Validate weight data as a number only
-    if (typeof Weight !== 'number') {
-        return res.status(400).json({ message: 'Weight must be a number' });
-      }
-    
-      const sql = buildUserExerciseInsertSql();
-      const result = await database.query(sql, [
-        UserID,
-        ExerciseID,
-        Weight,
-        Reps,
-        Sets,
-        Date,
-      ]);
-  
-      if (result[0].affectedRows === 1) {
-        res.status(201).json({ message: 'Exercise recorded successfully' });
-      } else {
-        res.status(400).json({ message: 'Failed to record exercise' });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal server error', error: error.toString() });
+  // Validate the incoming data
+  if (!ExerciseID || !Weight || !Reps || !Sets || !Date) {
+      return res.status(400).json({ message: 'Missing required fields' });
     }
+  // Validate weight data as a number only
+  if (typeof Weight !== 'number') {
+      return res.status(400).json({ message: 'Weight must be a number' });
+    }
+  
+    const sql = buildUserExerciseInsertSql();
+    const result = await database.query(sql, [
+      UserID,
+      ExerciseID,
+      Weight,
+      Reps,
+      Sets,
+      Date,
+    ]);
+
+    if (result[0].affectedRows === 1) {
+      res.status(201).json({ message: 'Exercise recorded successfully' });
+    } else {
+      res.status(400).json({ message: 'Failed to record exercise' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error', error: error.toString() });
+  }
 };
 
 const readUserExercisesController = async (req, res) => {
@@ -186,7 +186,6 @@ const deleteUserExerciseRecordController = async (req, res) => {
     const UserExerciseID = req.params.UserExerciseID;
     const UserID = req.params.UserID; 
     console.log('Delete Params: ', req.params);
-
 
     // Validate the incoming data ensuring the IDs are provided
     if (!UserExerciseID || !UserID) {

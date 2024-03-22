@@ -18,7 +18,6 @@ const app = new express();
 app.use(cors()); // Add this line to enable CORS (Cross-Origin Resource Sharing)
 app.use(express.json());
 
-
 // Initialisation -------------------------------------------
 
 const generateUniqueUserID = () => {
@@ -74,9 +73,6 @@ const loginController = async (req, res) => {
     const userID = generateUniqueUserID();
     console.log("user ID = ", userID);
 
-    
-
-
     // Respond with the user type
     res.json({ userType,userID });
   } catch (error) {
@@ -87,28 +83,22 @@ const loginController = async (req, res) => {
 
 };
 
-
-
-
 // Endpoints ------------------------------------------------
-
-// Exercises
-app.use('/api/exercises', exercisesRouter);
-
-// Exercise Types
-app.use('/api/exerciseTypes', exerciseTypesRouter);
-
-// User Exercises
-app.use('/api/userExercises', userExercisesRouter);
 
 // Login
 app.post('/api/login', loginController);
 
+// Exercise Types
+app.use('/api/exerciseTypes', exerciseTypesRouter);
+
+// Exercises
+app.use('/api/exercises', exercisesRouter);
+
+// User Exercises
+app.use('/api/userExercises', userExercisesRouter);
+
 // Profile
 app.use('/api/profiles', profilesRouter);
-
-// Cardio Exercises
-app.use('/api/cardioexercises', cardioExercisesRouter);
 
 // Routines
 app.use('/api/routines', routinesRouter);
@@ -116,9 +106,11 @@ app.use('/api/routines', routinesRouter);
 // Routine Exercises
 app.use('/api/routineexercises', routineExercisesRouter);
 
+// Cardio Exercises
+app.use('/api/cardioexercises', cardioExercisesRouter);
+
 // Stretching Exercises
 app.use('/api/stretchingexercises', stretchingExercisesRouter);
-
 
 
 // Start Server ---------------------------------------------
