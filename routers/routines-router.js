@@ -107,8 +107,29 @@ const readAllRoutinesController = async (req, res) => {
     }
 };
 
+
+const readRoutineByNameController = async (req, res) => {
+    try {
+        const routineName = req.params.RoutineName;
+        console.log("routine name: ", routineName);
+        console.log("req: ", req.params);
+        const sql = `SELECT * FROM Routines WHERE RoutineName = ?`;
+        const [results] = await database.query(sql, [routineName]);
+        if (results.length === 0) {
+            res.status(404).json({ message: 'Routine not found' });
+        } else {
+            res.status(200).json(results);
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+};
+
 const readRoutineIDRoutinesController = async (req, res) => {
     console.log("params routine id: ", req.params.RoutineID);
+    console.log("params : ", req.params);
+
     const routineId = req.params.RoutineID;
     const userId = req.params.UserID;
     const sql = buildRoutinesSelectRoutineIdSql(routineId, userId);
@@ -122,7 +143,7 @@ const readRoutineIDRoutinesController = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
-};
+}; 
 
 const updateRoutinesController = async (req, res) => {
     try {
@@ -185,10 +206,11 @@ const deleteRoutinesController = async (req, res) => {
 // Endpoints ---------------------------------------------
 
 router.get('/:UserID', readAllRoutinesController);
+router.get('/RoutineName/:RoutineName', readRoutineByNameController);
 router.get('/:RoutineID/:UserID', readRoutineIDRoutinesController);
 router.post('/', createRoutineController);
-router.put('/:RoutineID/:UserID', updateRoutinesController)
-router.delete('/:RoutineID/:UserID', deleteRoutinesController)
+router.put('/:RoutineID/:UserID', updateRoutinesController);
+router.delete('/:RoutineID/:UserID', deleteRoutinesController);
 
 
 export default router;
