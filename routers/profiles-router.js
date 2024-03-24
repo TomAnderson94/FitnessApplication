@@ -105,15 +105,12 @@ const createProfileController = async (req, res) => {
         return res.status(400).json({ message: 'Missing required fields' });
       }
   
-      // Insert a new profile into the database
       const sql = buildProfilesInsertSql();
       const result = await database.query(sql, [UserID, ProfileName, ProfileGoals, ProfileInterests, ProfileURL]);
   
       if (result[0].affectedRows === 1) {
-        // If the profile is successfully created, respond with a 201 status code
         res.status(201).json({ message: 'Profile created successfully' });
       } else {
-        // If creation fails for any reason, respond with a 400 status code
         res.status(400).json({ message: 'Failed to create profile' });
       }
     } catch (error) {
@@ -137,15 +134,12 @@ const updateProfileController = async (req, res) => {
         return res.status(400).json({ message: 'Missing required fields' });
         }
 
-        // Update the user's profile in the database
         const sql = buildProfileUpdateSql(ProfileName, ProfileGoals, ProfileInterests, ProfileURL, id);
         const result = await database.query(sql, [ProfileName, ProfileGoals, ProfileInterests, ProfileURL, id]);
 
         if (result[0].affectedRows === 1) {
-        // If the profile is successfully updated, respond with a 200 status code
         res.status(200).json({ message: 'Profile updated successfully' });
         } else {
-        // If update fails for any reason, respond with a 400 status code
         res.status(400).json({ message: 'Failed to update profile' });
         }
     } catch (error) {
@@ -155,19 +149,15 @@ const updateProfileController = async (req, res) => {
 };
 
 const deleteProfileController = async (req, res) => {
-
     try {
         const UserID = req.params.UserID;
 
-        // Delete the user's profile from the database
         const sql = buildProfileDeleteSql(UserID);
         const result = await database.query(sql, [UserID]);
 
         if (result[0].affectedRows === 1) {
-        // If the profile is successfully deleted, respond with a 200 status code
         res.status(200).json({ message: 'Profile deleted successfully' });
         } else {
-        // If deletion fails or no profile is found, respond with a 400 status code
         res.status(400).json({ message: 'Failed to delete profile or profile not found' });
         }
     } catch (error) {

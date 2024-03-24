@@ -148,7 +148,6 @@ const updateUserExercisesController = async (req, res) => {
     console.log("Reps: ", Reps);
     console.log("Sets: ", Sets);
 
-
     // Validate the incoming data
     if (UserID === undefined || !ExerciseID || !Weight || !Reps || !Sets || !Date) {
       return res.status(400).json({ message: 'Missing required fields' });

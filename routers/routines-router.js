@@ -107,7 +107,6 @@ const readAllRoutinesController = async (req, res) => {
     }
 };
 
-
 const readRoutineByNameController = async (req, res) => {
     try {
         const routineName = req.params.RoutineName;

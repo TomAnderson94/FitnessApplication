@@ -48,11 +48,9 @@ const readExercisesController = async (req,res) => {
             isSuccess = true;
             message = 'Record(s) successfully found';
         }
-    }
-    catch (error) {
+    } catch (error) {
         message = `Failed to execute query: ${error.message}`;
     }
-    
     // Responses
     isSuccess
     ? res.status(200).json(result)
@@ -75,8 +73,7 @@ const readExercisesOfTypeController = async (req,res) => {
             isSuccess = true;
             message = 'Record(s) successfully found';
         }
-    }
-    catch (error) {
+    } catch (error) {
         message = `Failed to execute query: ${error.message}`;
     }
     // Responses
