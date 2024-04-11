@@ -21,6 +21,7 @@ const buildCardioExercisesSelectSql = (id, variant) => {
       default:
           sql = `SELECT ${fields.join(', ')} FROM ${table}`;
           if (id) sql += ` WHERE UserID=${id}`;
+          sql += ` ORDER BY Date DESC`;
   }
   return sql;
 };
